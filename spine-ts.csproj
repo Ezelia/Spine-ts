@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{A993F30D-F0B8-435C-9560-B7D9901F6389}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="src\Animation.class.ts" />
+    <Content Include="build\spine.d.ts" />
+    <Content Include="build\spine.js" />
+    <Content Include="demo\ajax.js" />
+    <Content Include="demo\index.html" />
+    <Content Include="demo\Canvas2DSpine.class.js" />
+    <Content Include="demo\data\goblins.png" />
+    <Content Include="demo\data\spineboy.png" />
+    <Content Include="server.js" />
+    <Content Include="src\Animation.class.js">
+      <DependentUpon>Animation.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\AnimationStateData.class.ts" />
+    <TypeScriptCompile Include="src\AnimationState.class.ts" />
+    <Content Include="src\AnimationState.class.js">
+      <DependentUpon>AnimationState.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\AnimationStateData.class.js">
+      <DependentUpon>AnimationStateData.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\BoneData.class.ts" />
+    <TypeScriptCompile Include="src\Bone.class.ts" />
+    <TypeScriptCompile Include="src\AttachmentTimeline.class.ts" />
+    <TypeScriptCompile Include="src\Atlas.class.ts" />
+    <Content Include="src\Atlas.class.js">
+      <DependentUpon>Atlas.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\AtlasPage.class.ts" />
+    <TypeScriptCompile Include="src\AtlasAttachmentLoader.class.ts" />
+    <Content Include="src\AtlasAttachmentLoader.class.js">
+      <DependentUpon>AtlasAttachmentLoader.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\AtlasPage.class.js">
+      <DependentUpon>AtlasPage.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\AtlasRegion.class.ts" />
+    <TypeScriptCompile Include="src\AtlasReader.class.ts" />
+    <Content Include="src\AtlasReader.class.js">
+      <DependentUpon>AtlasReader.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\AtlasRegion.class.js">
+      <DependentUpon>AtlasRegion.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\AttachmentTimeline.class.js">
+      <DependentUpon>AttachmentTimeline.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\AttachmentType.class.ts" />
+    <Content Include="src\AttachmentType.class.js">
+      <DependentUpon>AttachmentType.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\Bone.class.js">
+      <DependentUpon>Bone.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\BoneData.class.js">
+      <DependentUpon>BoneData.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\Curves.class.ts" />
+    <TypeScriptCompile Include="src\ColorTimeline.class.ts" />
+    <Content Include="src\ColorTimeline.class.js">
+      <DependentUpon>ColorTimeline.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\Curves.class.js">
+      <DependentUpon>Curves.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\SlotData.class.ts" />
+    <TypeScriptCompile Include="src\Slot.class.ts" />
+    <TypeScriptCompile Include="src\Skin.class.ts" />
+    <TypeScriptCompile Include="src\RotateTimeline.class.ts" />
+    <TypeScriptCompile Include="src\RegionAttachment.class.ts" />
+    <Content Include="src\RegionAttachment.class.js">
+      <DependentUpon>RegionAttachment.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\RotateTimeline.class.js">
+      <DependentUpon>RotateTimeline.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\ScaleTimeline.class.ts" />
+    <Content Include="src\ScaleTimeline.class.js">
+      <DependentUpon>ScaleTimeline.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\SkeletonData.class.ts" />
+    <TypeScriptCompile Include="src\Skeleton.class.ts" />
+    <Content Include="src\Skeleton.class.js">
+      <DependentUpon>Skeleton.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\SkeletonData.class.js">
+      <DependentUpon>SkeletonData.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\SkeletonJson.class.ts" />
+    <Content Include="src\SkeletonJson.class.js">
+      <DependentUpon>SkeletonJson.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\Skin.class.js">
+      <DependentUpon>Skin.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\Slot.class.js">
+      <DependentUpon>Slot.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\SlotData.class.js">
+      <DependentUpon>SlotData.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\util.ts" />
+    <TypeScriptCompile Include="src\TranslateTimeline.class.ts" />
+    <Content Include="src\TranslateTimeline.class.js">
+      <DependentUpon>TranslateTimeline.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\util.js">
+      <DependentUpon>util.ts</DependentUpon>
+    </Content>
+    <Content Include="web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="demo\data\goblins.atlas" />
+    <Content Include="demo\data\goblins.json" />
+    <Content Include="demo\data\spineboy.atlas" />
+    <Content Include="demo\data\spineboy.json" />
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>spine</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:57860/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptModuleKind>AMD</TypeScriptModuleKind>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+    <TypeScriptModuleKind>AMD</TypeScriptModuleKind>
+  </PropertyGroup>
+  <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" />
+  <Target Name="AfterBuild">
+    <Exec Command="tsc --out build\spine.js @(TypeScriptCompile ->'%(fullpath)', ' ') --declaration --sourcemap --target ES5" />
+  </Target>
+</Project>
