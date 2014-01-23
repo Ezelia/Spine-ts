@@ -29,6 +29,7 @@
 module spine {
 
     export class RegionAttachment {
+        public type = spine.AttachmentType.region;
         public x: number = 0;
         public y: number = 0;
         public rotation: number = 0;
@@ -47,7 +48,7 @@ module spine {
 
         public offset: any[];
         public uvs: any[];
-        constructor() { //FIXME : PR : AtlasAttachmentLoader calling it with (name)
+        constructor(public name?) { 
             this.offset = [];
             this.offset.length = 8;
             this.uvs = [];

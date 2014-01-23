@@ -29,17 +29,25 @@ module spine {
     export class Animation {
         constructor(public name, public timelines, public duration) {
         }
-        public apply(skeleton, time, loop) {
-            if (loop && this.duration != 0) time %= this.duration;
+        public apply(skeleton, lastTime, time, loop, events) {
+            if (loop && this.duration != 0) {
+                time %= this.duration;
+                lastTime %= this.duration;
+
+            }
             var timelines = this.timelines;
             for (var i = 0, n = timelines.length; i < n; i++)
-                timelines[i].apply(skeleton, time, 1);
+                timelines[i].apply(skeleton, lastTime, time, events, 1);
         }
-        public mix(skeleton, time, loop, alpha) {
-            if (loop && this.duration != 0) time %= this.duration;
+        public mix(skeleton, lastTime, time, loop, events, alpha) {
+            if (loop && this.duration != 0) {
+                time %= this.duration;
+                lastTime %= this.duration;
+
+            }
             var timelines = this.timelines;
             for (var i = 0, n = timelines.length; i < n; i++)
-                timelines[i].apply(skeleton, time, alpha);
+                timelines[i].apply(skeleton, lastTime, time, events, alpha);
         }
     }
 }

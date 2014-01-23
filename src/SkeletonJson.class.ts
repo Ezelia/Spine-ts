@@ -63,8 +63,8 @@ module spine {
                 boneData.rotation = (boneMap["rotation"] || 0);
                 boneData.scaleX = boneMap["scaleX"] || 1;
                 boneData.scaleY = boneMap["scaleY"] || 1;
-                boneData.inheritScale = boneMap["inheritScale"] || true;
-                boneData.inheritRotation = boneMap["inheritRotation"] || true;
+                boneData.inheritScale = !boneMap["inheritScale"] || boneMap["inheritScale"] == "true";
+                boneData.inheritRotation = !boneMap["inheritRotation"] || boneMap["inheritRotation"] == "true";
                 skeletonData.bones.push(boneData);
             }
 
@@ -85,7 +85,7 @@ module spine {
                 }
 
                 slotData.attachmentName = slotMap["attachment"];
-                slotData.additiveBlending = slotMap["additive"];
+                slotData.additiveBlending = slotMap["additive"] && slotMap["additive"] == "true";
 
                 skeletonData.slots.push(slotData);
             }
@@ -108,6 +108,18 @@ module spine {
                 }
                 skeletonData.skins.push(skin);
                 if (skin.name == "default") skeletonData.defaultSkin = skin;
+            }
+
+            // Events.
+            var events = root["events"];
+            for (var eventName in events) {
+                if (!events.hasOwnProperty(eventName)) continue;
+                var eventMap = events[eventName];
+                var eventData = new spine.EventData(eventName);
+                eventData.intValue = eventMap["int"] || 0;
+                eventData.floatValue = eventMap["float"] || 0;
+                eventData.stringValue = eventMap["string"] || null;
+                skeletonData.events.push(eventData);
             }
 
             // Animations.
@@ -134,6 +146,10 @@ module spine {
                 attachment.width = (map["width"] || 32) * this.scale;
                 attachment.height = (map["height"] || 32) * this.scale;
                 attachment.updateOffset();
+            } else if (type == spine.AttachmentType.boundingBox) {
+                var vertices = map["vertices"];
+                for (var i = 0, n = vertices.length; i < n; i++)
+                    attachment.vertices.push(vertices[i] * this.scale);
             }
 
             return attachment;
@@ -153,7 +169,7 @@ module spine {
                     if (!boneMap.hasOwnProperty(timelineName)) continue;
                     var values = boneMap[timelineName];
                     if (timelineName == "rotate") {
-                        var timeline:any = new spine.RotateTimeline(values.length);
+                        var timeline: any = new spine.RotateTimeline(values.length);
                         timeline.boneIndex = boneIndex;
 
                         var frameIndex = 0;
@@ -237,6 +253,66 @@ module spine {
                     } else
                         throw "Invalid timeline type for a slot: " + timelineName + " (" + slotName + ")";
                 }
+            }
+
+
+
+            var events = map["events"];
+            if (events) {
+                var timeline: any = new spine.EventTimeline(events.length);
+                var frameIndex = 0;
+                for (var i = 0, n = events.length; i < n; i++) {
+                    var eventMap = events[i];
+                    var eventData = skeletonData.findEvent(eventMap["name"]);
+                    if (!eventData) throw "Event not found: " + eventMap["name"];
+                    var event = new spine.Event(eventData);
+                    event.intValue = eventMap.hasOwnProperty("int") ? eventMap["int"] : eventData.intValue;
+                    event.floatValue = eventMap.hasOwnProperty("float") ? eventMap["float"] : eventData.floatValue;
+                    event.stringValue = eventMap.hasOwnProperty("string") ? eventMap["string"] : eventData.stringValue;
+                    timeline.setFrame(frameIndex++, eventMap["time"], event);
+                }
+                timelines.push(timeline);
+                duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
+            }
+
+            var drawOrderValues = map["draworder"];
+            if (drawOrderValues) {
+                var timeline: any = new spine.DrawOrderTimeline(drawOrderValues.length);
+                var slotCount = skeletonData.slots.length;
+                var frameIndex = 0;
+                for (var i = 0, n = drawOrderValues.length; i < n; i++) {
+                    var drawOrderMap = drawOrderValues[i];
+                    var drawOrder = null;
+                    if (drawOrderMap["offsets"]) {
+                        drawOrder = [];
+                        drawOrder.length = slotCount;
+                        for (var ii = slotCount - 1; ii >= 0; ii--)
+                            drawOrder[ii] = -1;
+                        var offsets = drawOrderMap["offsets"];
+                        var unchanged = [];
+                        unchanged.length = slotCount - offsets.length;
+                        var originalIndex = 0, unchangedIndex = 0;
+                        for (var ii = 0, nn = offsets.length; ii < nn; ii++) {
+                            var offsetMap = offsets[ii];
+                            var slotIndex = skeletonData.findSlotIndex(offsetMap["slot"]);
+                            if (slotIndex == -1) throw "Slot not found: " + offsetMap["slot"];
+                            // Collect unchanged items.
+                            while (originalIndex != slotIndex)
+                                unchanged[unchangedIndex++] = originalIndex++;
+                            // Set changed items.
+                            drawOrder[originalIndex + offsetMap["offset"]] = originalIndex++;
+                        }
+                        // Collect remaining unchanged items.
+                        while (originalIndex < slotCount)
+                            unchanged[unchangedIndex++] = originalIndex++;
+                        // Fill in unchanged items.
+                        for (var ii = slotCount - 1; ii >= 0; ii--)
+                            if (drawOrder[ii] == -1) drawOrder[ii] = unchanged[--unchangedIndex];
+                    }
+                    timeline.setFrame(frameIndex++, drawOrderMap["time"], drawOrder);
+                }
+                timelines.push(timeline);
+                duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
             }
 
             skeletonData.animations.push(new spine.Animation(name, timelines, duration));

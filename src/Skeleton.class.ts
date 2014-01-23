@@ -155,8 +155,8 @@ module spine {
                 if (slot.data.name == slotName) {
                     var attachment = null;
                     if (attachmentName) {
-                        attachment = this.getAttachmentBySlotIndex(i, attachmentName); //FIXME : PR  getAttachment => getAttachmentBySlotIndex
-                        if (attachment == null) throw "Attachment not found: " + attachmentName + ", for slot: " + slotName;
+                        attachment = this.getAttachmentBySlotIndex(i, attachmentName); //FIXME : PR  getAttachment => getAttachmentBySlotIndex                        
+                        if (!attachment) throw "Attachment not found: " + attachmentName + ", for slot: " + slotName;
                     }
                     slot.setAttachment(attachment);
                     return;

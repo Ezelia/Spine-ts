@@ -46,7 +46,7 @@ module spine {
             this.frames[frameIndex] = time;
             this.frames[frameIndex + 1] = angle;
         }
-        public apply(skeleton, time, alpha) {
+        public apply(skeleton, lastTime, time, firedEvents, alpha) {
             var frames = this.frames;
             if (time < frames[0]) return; // Time is before first frame.
 

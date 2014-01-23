@@ -92,7 +92,7 @@ module spine {
                     else if (direction == "xy")
                         page.uWrap = page.vWrap = spine.Atlas.TextureWrap.repeat;
 
-                    textureLoader.load(page, line);
+                    textureLoader.load(page, line, this);
 
                     this.pages.push(page);
 

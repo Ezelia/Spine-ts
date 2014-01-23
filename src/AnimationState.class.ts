@@ -28,107 +28,202 @@
 
 module spine {
     export class AnimationState {
-        public queue: any[];
+        public tracks: any[];
+        public events: Event[];
 
-        public current;
-        public previous;
-        public currentTime: number = 0;
-        public previousTime: number = 0;
-        public currentLoop: boolean = false;
-        public previousLoop: boolean = false;
-        public mixTime: number = 0;
-        public mixDuration: number = 0;
+
+        public onStart: any;
+        public onEnd: any;
+        public onComplete: any;
+        public onEvent: any;
+        public timeScale = 1;
 
         constructor(public data: AnimationStateData) {
 
-            this.queue = [];
+            this.tracks = [];
+            this.events = [];
         }
 
         public update(delta) {
-            this.currentTime += delta;
-            this.previousTime += delta;
-            this.mixTime += delta;
 
-            if (this.queue.length > 0) {
-                var entry = this.queue[0];
-                if (this.currentTime >= entry.delay) {
-                    this._setAnimation(entry.animation, entry.loop);
-                    this.queue.shift();
+            delta *= this.timeScale;
+            for (var i = 0; i < this.tracks.length; i++) {
+                var current = this.tracks[i];
+                if (!current) continue;
+
+                var trackDelta = delta * current.timeScale;
+
+                current.time += trackDelta;
+
+                if (current.previous) {
+                    current.previous.time += trackDelta;
+                    current.mixTime += trackDelta;
+                }
+
+
+
+                var next = current.next;
+                if (next) {
+                    if (current.lastTime >= next.delay) this.setCurrent(i, next);
+                } else {
+                    // End non-looping animation when it reaches its end time and there is no next entry.
+                    if (!current.loop && current.lastTime >= current.endTime) this.clearTrack(i);
                 }
             }
         }
         public apply(skeleton: Skeleton) {
-            if (!this.current) return;
-            if (this.previous) {
-                this.previous.apply(skeleton, this.previousTime, this.previousLoop);
-                var alpha = this.mixTime / this.mixDuration;
-                if (alpha >= 1) {
-                    alpha = 1;
-                    this.previous = null;
+
+            for (var i = 0; i < this.tracks.length; i++) {
+                var current = this.tracks[i];
+                if (!current) continue;
+
+                this.events.length = 0;
+
+                var time = current.time;
+
+                var lastTime = current.lastTime;
+                var endTime = current.endTime;
+                var loop = current.loop;
+                if (!loop && time > endTime) time = endTime;
+
+                var previous = current.previous;
+                if (!previous)
+                    current.animation.apply(skeleton, current.lastTime, time, loop, this.events);
+                else {
+                    var previousTime = previous.time;
+                    if (!previous.loop && previousTime > previous.endTime) previousTime = previous.endTime;
+                    previous.animation.apply(skeleton, previousTime, previousTime, previous.loop, null);
+
+                    var alpha = current.mixTime / current.mixDuration;
+                    if (alpha >= 1) {
+                        alpha = 1;
+                        current.previous = null;
+                    }
+                    current.animation.mix(skeleton, current.lastTime, time, loop, this.events, alpha);
                 }
-                this.current.mix(skeleton, this.currentTime, this.currentLoop, alpha);
-            } else
-                this.current.apply(skeleton, this.currentTime, this.currentLoop);
+
+
+                for (var ii = 0, nn = this.events.length; ii < nn; ii++) {
+                    var event = this.events[ii];
+                    if (current.onEvent != null) current.onEvent(i, event);
+                    if (this.onEvent != null) this.onEvent(i, event);
+                }
+
+
+                // Check if completed the animation or a loop iteration.
+                if (loop ? (lastTime % endTime > time % endTime) : (lastTime < endTime && time >= endTime)) {
+                    var count = Math.floor(time / endTime);
+                    if (current.onComplete) current.onComplete(i, count);
+                    if (this.onComplete) this.onComplete(i, count);
+                }
+
+                current.lastTime = current.time;
+            }
         }
-        public clearAnimation() {
-            this.previous = null;
-            this.current = null;
-            this.queue.length = 0;
+        public clearTracks() {
+            for (var i = 0, n = this.tracks.length; i < n; i++)
+                this.clearTrack(i);
+            this.tracks.length = 0;
         }
-        private _setAnimation(animation, loop) {
-            this.previous = null;
-            if (animation && this.current) {
-                this.mixDuration = this.data.getMix(this.current, animation);
-                if (this.mixDuration > 0) {
-                    this.mixTime = 0;
-                    this.previous = this.current;
-                    this.previousTime = this.currentTime;
-                    this.previousLoop = this.currentLoop;
+        public clearTrack(trackIndex) {
+            if (trackIndex >= this.tracks.length) return;
+            var current = this.tracks[trackIndex];
+            if (!current) return;
+
+            if (current.onEnd != null) current.onEnd(trackIndex);
+            if (this.onEnd != null) this.onEnd(trackIndex);
+
+            this.tracks[trackIndex] = null;
+        }
+        private _expandToIndex(index) {
+            if (index < this.tracks.length) return this.tracks[index];
+            while (index >= this.tracks.length)
+                this.tracks.push(null);
+            return null;
+        }
+        public setCurrent(index, entry) {
+            var current = this._expandToIndex(index);
+            if (current) {
+                var previous = current.previous;
+                current.previous = null;
+
+                if (current.onEnd != null) current.onEnd(index);
+                if (this.onEnd != null) this.onEnd(index);
+
+                entry.mixDuration = this.data.getMix(current.animation, entry.animation);
+                if (entry.mixDuration > 0) {
+                    entry.mixTime = 0;
+                    // If a mix is in progress, mix from the closest animation.
+                    if (previous && current.mixTime / current.mixDuration < 0.5)
+                        entry.previous = previous;
+                    else
+                        entry.previous = current;
+
+
                 }
             }
-            this.current = animation;
-            this.currentLoop = loop;
-            this.currentTime = 0;
+
+            this.tracks[index] = entry;
+
+            if (entry.onStart != null) entry.onStart(index);
+            if (this.onStart != null) this.onStart(index);
         }
-        /** @see #setAnimation(Animation, Boolean) */
-        public setAnimationByName(animationName, loop) {
+        
+        public setAnimationByName(trackIndex, animationName, loop) {
             var animation = this.data.skeletonData.findAnimation(animationName);
             if (!animation) throw "Animation not found: " + animationName;
-            this.setAnimation(animation, loop);
+            this.setAnimation(trackIndex, animation, loop);
         }
-        /** Set the current animation. Any queued animations are cleared and the current animation time is set to 0.
-        * @param animation May be null. */
-        public setAnimation(animation, loop) {
-            this.queue.length = 0;
-            this._setAnimation(animation, loop);
+
+        /** Set the current animation. Any queued animations are cleared. */
+        public setAnimation(trackIndex, animation, loop) {
+            var entry = new spine.TrackEntry();
+            entry.animation = animation;
+            entry.loop = loop;
+            entry.endTime = animation.duration;
+            this.setCurrent(trackIndex, entry);
+            return entry;
         }
-        /** @see #addAnimation(Animation, Boolean, Number) */
-        public addAnimationByName(animationName, loop, delay) {
+
+        
+        public addAnimationByName(trackIndex, animationName, loop, delay) {
             var animation = this.data.skeletonData.findAnimation(animationName);
             if (!animation) throw "Animation not found: " + animationName;
-            this.addAnimation(animation, loop, delay);
+            this.addAnimation(trackIndex, animation, loop, delay);
         }
         /** Adds an animation to be played delay seconds after the current or last queued animation.
         * @param delay May be <= 0 to use duration of previous animation minus any mix duration plus the negative delay. */
-        public addAnimation(animation, loop, delay) {
-            var entry: any = {};
+
+        public addAnimation(trackIndex, animation, loop, delay) {
+            var entry = new spine.TrackEntry();
             entry.animation = animation;
             entry.loop = loop;
 
-            if (!delay || delay <= 0) {
-                var previousAnimation = this.queue.length == 0 ? this.current : this.queue[this.queue.length - 1].animation;
-                if (previousAnimation != null)
-                    delay = previousAnimation.duration - this.data.getMix(previousAnimation, animation) + (delay || 0);
+            entry.endTime = animation.duration;
+
+            var last = this._expandToIndex(trackIndex);
+            if (last) {
+                while (last.next)
+                    last = last.next;
+                last.next = entry;
+            } else
+                this.tracks[trackIndex] = entry;
+
+            if (delay <= 0) {
+                if (last)
+                    delay += last.endTime - this.data.getMix(last.animation, animation);
                 else
                     delay = 0;
             }
             entry.delay = delay;
 
-            this.queue.push(entry);
+            return entry;
         }
-        /** Returns true if no animation is set or if the current time is greater than the animation duration, regardless of looping. */
-        public isComplete() {
-            return !this.current || this.currentTime >= this.current.duration;
+
+        /** May be null. */
+        public getCurrent(trackIndex) {
+            if (trackIndex >= this.tracks.length) return null;
+            return this.tracks[trackIndex];
         }
 
     }

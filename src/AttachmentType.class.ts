@@ -29,5 +29,6 @@
 module spine {
     export class AttachmentType {   //use enum instead ?
         public static region: number = 0;
+        public static boundingBox: number = 1;
     }
 }

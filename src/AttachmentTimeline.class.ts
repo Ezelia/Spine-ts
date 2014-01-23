@@ -36,7 +36,7 @@ module spine {
             this.curves = new spine.Curves(frameCount);
             this.frames = []; // time, ...
             this.frames.length = frameCount;
-            this.attachmentNames = []; // time, ...
+            this.attachmentNames = []; 
             this.attachmentNames.length = frameCount;
         }
 
@@ -48,7 +48,7 @@ module spine {
             this.frames[frameIndex] = time;
             this.attachmentNames[frameIndex] = attachmentName;
         }
-        public apply(skeleton, time, alpha) {
+        public apply(skeleton, lastTime, time, firedEvents, alpha) {
             var frames = this.frames;
             if (time < frames[0]) return; // Time is before first frame.
 

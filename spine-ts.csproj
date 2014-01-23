@@ -74,6 +74,10 @@
     </Content>
     <TypeScriptCompile Include="src\Curves.class.ts" />
     <TypeScriptCompile Include="src\ColorTimeline.class.ts" />
+    <TypeScriptCompile Include="src\BoundingBoxAttachment.class.ts" />
+    <Content Include="src\BoundingBoxAttachment.class.js">
+      <DependentUpon>BoundingBoxAttachment.class.ts</DependentUpon>
+    </Content>
     <Content Include="src\ColorTimeline.class.js">
       <DependentUpon>ColorTimeline.class.ts</DependentUpon>
     </Content>
@@ -85,6 +89,22 @@
     <TypeScriptCompile Include="src\Skin.class.ts" />
     <TypeScriptCompile Include="src\RotateTimeline.class.ts" />
     <TypeScriptCompile Include="src\RegionAttachment.class.ts" />
+    <TypeScriptCompile Include="src\EventTimeline.class.ts" />
+    <TypeScriptCompile Include="src\DrawOrderTimeline.class.ts" />
+    <Content Include="src\DrawOrderTimeline.class.js">
+      <DependentUpon>DrawOrderTimeline.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\EventData.class.ts" />
+    <TypeScriptCompile Include="src\Event.class.ts" />
+    <Content Include="src\Event.class.js">
+      <DependentUpon>Event.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\EventData.class.js">
+      <DependentUpon>EventData.class.ts</DependentUpon>
+    </Content>
+    <Content Include="src\EventTimeline.class.js">
+      <DependentUpon>EventTimeline.class.ts</DependentUpon>
+    </Content>
     <Content Include="src\RegionAttachment.class.js">
       <DependentUpon>RegionAttachment.class.ts</DependentUpon>
     </Content>
@@ -99,6 +119,10 @@
     <TypeScriptCompile Include="src\Skeleton.class.ts" />
     <Content Include="src\Skeleton.class.js">
       <DependentUpon>Skeleton.class.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="src\SkeletonBounds.class.ts" />
+    <Content Include="src\SkeletonBounds.class.js">
+      <DependentUpon>SkeletonBounds.class.ts</DependentUpon>
     </Content>
     <Content Include="src\SkeletonData.class.js">
       <DependentUpon>SkeletonData.class.ts</DependentUpon>
@@ -118,6 +142,10 @@
     </Content>
     <TypeScriptCompile Include="src\util.ts" />
     <TypeScriptCompile Include="src\TranslateTimeline.class.ts" />
+    <TypeScriptCompile Include="src\TrackEntry.class.ts" />
+    <Content Include="src\TrackEntry.class.js">
+      <DependentUpon>TrackEntry.class.ts</DependentUpon>
+    </Content>
     <Content Include="src\TranslateTimeline.class.js">
       <DependentUpon>TranslateTimeline.class.ts</DependentUpon>
     </Content>

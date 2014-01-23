@@ -29,8 +29,11 @@
 module spine {
     export class AtlasAttachmentLoader {
         constructor(public atlas) { }
-        public newAttachment (skin, type, name) {
+        public newAttachment (skin, type, name):any {
             switch (type) {
+                case spine.AttachmentType.boundingBox: 
+                    return new spine.BoundingBoxAttachment(name);
+
                 case spine.AttachmentType.region:
                     var region = this.atlas.findRegion(name);
                     if (!region) throw "Region not found in atlas: " + name + " (" + type + ")";

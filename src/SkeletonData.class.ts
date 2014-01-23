@@ -31,6 +31,7 @@ module spine {
         public bones: BoneData[];
         public slots: SlotData[];
         public skins: Skin[];
+        public events: EventData[];
         public animations: any[];
         public defaultSkin: any = null;
         constructor() {
@@ -77,6 +78,16 @@ module spine {
                 if (skins[i].name == skinName) return skins[i];
             return null;
         }
+
+
+        /** @return May be null. */
+        public findEvent(eventName) {
+            var events = this.events;
+            for (var i = 0, n = events.length; i < n; i++)
+                if (events[i].name == eventName) return events[i];
+            return null;
+        }
+
         /** @return May be null. */
         public findAnimation(animationName) {
             var animations = this.animations;
